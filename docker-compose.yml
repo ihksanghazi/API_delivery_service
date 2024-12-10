@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  rest_api:
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+    command: air cmd/main.go -b 0.0.0.0
+    depends_on:
+      - db
+    networks:
+      - dbnetwork
+
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dbnetwork
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - dbnetwork
+
+volumes:
+  postgres_data:
+
+networks:
+  dbnetwork:
+    driver : bridge
