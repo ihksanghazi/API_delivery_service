@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/ihksanghazi/API_delivery_service/database"
+	"github.com/ihksanghazi/API_delivery_service/model/domain"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-
 	// memuat file .env
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -27,7 +26,7 @@ func main() {
 	dbTimeZone := os.Getenv("DB_TIME_ZONE")
 
 	database.ConnectDB(dbHost, dbUser, dbPassword, dbName, dbPort, dbTimeZone)
-	fmt.Println("DB Connected")
+	database.DB.AutoMigrate(domain.User{}, domain.Address{}, domain.Shipment{}, domain.ShipmentDetail{}, domain.Pricing{}, domain.Payment{})
 
 	app := fiber.New()
 
